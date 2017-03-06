@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Simplete demo</title>
+	<style>
+simplete-suggestions {
+	display: block; /* required to envelop child elements */
+}
+
+[aria-busy=true] {
+	opacity: 0.2;
+}
+	</style>
+</head>
+
+<body>
+	<h1>Simplete demo</h1>
+
+	<form action="results.html" method="get">
+		<simplete-form action="suggestions.html" method="get">
+			<input type="search" name="q" autofocus>
+			<label>
+				<input type="checkbox" name="case-sensitive" value="1">
+				case-sensitive
+			</label>
+		</simplete-form>
+
+		<button>search</button>
+	</form>
+
+	<script src="../node_modules/document-register-element/build/document-register-element.js"></script>
+	<script src="../dist/bundle.js"></script>
+</body>
+
+</html>
