@@ -1,0 +1,18 @@
+body {
+	font-family: sans-serif;
+}
+
+simplete-suggestions {
+	border: 1px solid #AAA;
+	padding: 5px;
+	background-color: #EEE;
+}
+
+simplete-form[aria-busy=true],
+simplete-suggestions[aria-busy=true] {
+	opacity: 0.2;
+}
+
+simplete-suggestions [aria-selected=true] {
+	background-color: #FFFFA5;
+}
