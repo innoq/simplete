@@ -14,6 +14,7 @@ class SimpleteForm extends HTMLElement {
 	constructor(self) { // NB: `self` only required due to polyfill
 		self = super(self);
 
+		self.onCycle = self.onCycle.bind(self);
 		self.onResponse = self.onResponse.bind(self);
 
 		return self;
@@ -30,6 +31,7 @@ class SimpleteForm extends HTMLElement {
 		this.addEventListener("input", onQuery);
 		this.addEventListener("change", onQuery);
 		this.addEventListener("simplete-selection", this.onSelect);
+		this.searchField.addEventListener("keydown", this.onCycle);
 	}
 
 	onQuery(ev) {
@@ -60,10 +62,25 @@ class SimpleteForm extends HTMLElement {
 		dispatchEvent(this, "simplete-response", { html }); // TODO: rename event and payload?
 	}
 
+	onCycle(ev) {
+		let direction = {
+			38: "prev", // up
+			40: "next" // down
+		}[ev.which || ev.keyCode]; // XXX: fallback obsolete? use `#key`?
+		if(!direction) {
+			return;
+		}
+
+		dispatchEvent(this, "simplete-nav", { direction });
+	}
+
 	onSelect(ev) {
 		this.selecting = true;
 		this.payload = this.serialize();
 		this.searchField.value = ev.detail.value;
+		// TODO: if `ev.detail.preview`, field value should be considered
+		//       temporary - i.e. there should be a way to undo and return to
+		//       the original input (e.g. via ESC)
 	}
 
 	submit() {
