@@ -61,13 +61,12 @@ export default class SimpleteSuggestions extends HTMLElement {
 		} else { // select adjacent item or wrap around
 			currentItem.removeAttribute("aria-selected");
 
-			// FIXME: use of `#…ElementSibling` assumes shared parent container
+			let items = [...this.querySelectorAll(selector)];
+			let index = items.indexOf(currentItem);
 			if(next) {
-				currentItem = currentItem.nextElementSibling ||
-						this.querySelector(selector);
+				currentItem = items[index + 1] || items[0];
 			} else {
-				currentItem = currentItem.previousElementSibling ||
-						selectLast(this, selector);
+				currentItem = index > 0 ? items[index - 1] : items[items.length - 1];
 			}
 		}
 
