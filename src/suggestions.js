@@ -2,8 +2,9 @@
 import { selectLast } from "./util";
 import { dispatchEvent } from "uitil/dom/events";
 
+const TAG = "simplete-suggestions";
 const DEFAULTS = {
-	itemSelector: "li"
+	itemSelector: "li" // TODO: document dynamic configuration
 };
 
 export default class SimpleteSuggestions extends HTMLElement {
@@ -39,6 +40,14 @@ export default class SimpleteSuggestions extends HTMLElement {
 
 	onResults(ev) { // TODO: rename
 		this.render(ev.detail.html);
+
+		// determine item selector
+		let attr = "data-item-selector";
+		// NB: parent node is used to work around `querySelector` limitation WRT
+		//     immediate child elements -- XXX: not actually necessary?
+		let container = this.parentNode.querySelector(`${TAG} > [${attr}]`);
+		let selector = container && container.getAttribute(attr);
+		this.itemSelector = selector || DEFAULTS.itemSelector;
 	}
 
 	onCycle(ev) {
@@ -113,10 +122,6 @@ export default class SimpleteSuggestions extends HTMLElement {
 	get root() {
 		return this.closest("simplete-form");
 	}
-
-	get itemSelector() { // TODO: memoize, resetting cached value in `#onResults`?
-		return this.getAttribute("item-selector") || DEFAULTS.itemSelector;
-	}
 };
 
-customElements.define("simplete-suggestions", SimpleteSuggestions);
+customElements.define(TAG, SimpleteSuggestions);
