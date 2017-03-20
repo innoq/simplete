@@ -9,7 +9,9 @@ const DEFAULTS = {
 	queryDelay: 200 // milliseconds
 };
 
-const RESET = {}; // poor man's `Symbol`
+// poor man's `Symbol`s
+const PREVIEW = {}; // TODO: rename
+const RESET = {};
 
 class SimpleteForm extends HTMLElement {
 	// NB: `self` only required due to document-register-element polyfill
@@ -39,7 +41,7 @@ class SimpleteForm extends HTMLElement {
 	}
 
 	onQuery(ev) {
-		// guard against redundant activation via selection
+		// ignore previews as well as redundant activation via selection
 		if(this.selecting) {
 			delete this.selecting;
 			return;
@@ -85,19 +87,23 @@ class SimpleteForm extends HTMLElement {
 			break;
 		case "Enter":
 		case 13: // Enter
-			dispatchEvent(this, "simplete-confirm"); // TODO: rename?
-			ev.preventDefault(); // XXX: optional? sometimes we do want the form submission
+			// let the browser's default behavior (typically form submission)
+			// kick in unless we're in the process of navigating suggestions
+			if(this.navigating === PREVIEW) {
+				dispatchEvent(this, "simplete-confirm"); // TODO: rename?
+				ev.preventDefault();
+			}
 			break;
 		}
 	}
 
 	onSelect(ev) {
-		this.selecting = true;
+		let { value, preview } = ev.detail;
+		this.selecting = preview ? PREVIEW : true;
 		this.payload = this.serialize();
-		this.searchField.value = ev.detail.value;
-		// TODO: if `ev.detail.preview`, field value should be considered
-		//       temporary - i.e. there should be a way to undo and return to
-		//       the original input (e.g. via ESC)
+		this.searchField.value = value;
+		// TODO: if `preview`, field value should be considered temporary - i.e. there
+		//       should be a way to undo and return to the original input (e.g. via ESC)
 	}
 
 	submit() {
