@@ -27,11 +27,14 @@ class SimpleteForm extends HTMLElement {
 			this.appendChild(results);
 		}
 
+		let field = this.searchField;
+		field.setAttribute("autocomplete", "off");
+
 		let onQuery = debounce(this.queryDelay, this, this.onQuery);
 		this.addEventListener("input", onQuery);
 		this.addEventListener("change", onQuery);
 		this.addEventListener("simplete-selection", this.onSelect);
-		this.searchField.addEventListener("keydown", this.onCycle);
+		field.addEventListener("keydown", this.onCycle);
 	}
 
 	onQuery(ev) {
