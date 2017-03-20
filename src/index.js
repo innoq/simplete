@@ -1,6 +1,7 @@
 /* eslint-env browser */
 import "./suggestions";
 import { dispatchEvent } from "uitil/dom/events";
+import bindMethodContext from "uitil/method_context";
 import debounce from "uitil/debounce";
 
 const DEFAULTS = {
@@ -11,11 +12,11 @@ const DEFAULTS = {
 const RESET = {}; // poor man's `Symbol`
 
 class SimpleteForm extends HTMLElement {
-	constructor(self) { // NB: `self` only required due to polyfill
+	// NB: `self` only required due to document-register-element polyfill
+	constructor(self) {
 		self = super(self);
 
-		self.onCycle = self.onCycle.bind(self);
-		self.onResponse = self.onResponse.bind(self);
+		bindMethodContext(self, "onCycle", "onResponse");
 
 		return self;
 	}

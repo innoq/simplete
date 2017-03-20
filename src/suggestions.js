@@ -1,6 +1,7 @@
 /* eslint-env browser */
 import { selectLast } from "./util";
 import { dispatchEvent } from "uitil/dom/events";
+import bindMethodContext from "uitil/method_context";
 
 const TAG = "simplete-suggestions";
 const DEFAULTS = {
@@ -8,12 +9,11 @@ const DEFAULTS = {
 };
 
 export default class SimpleteSuggestions extends HTMLElement {
-	constructor(self) { // NB: `self` only required due to polyfill
+	// NB: `self` only required due to document-register-element polyfill
+	constructor(self) {
 		self = super(self);
 
-		this.onQuery = this.onQuery.bind(this);
-		this.onResults = this.onResults.bind(this);
-		self.onCycle = self.onCycle.bind(self);
+		bindMethodContext(self, "onQuery", "onResults", "onCycle");
 
 		return self;
 	}
