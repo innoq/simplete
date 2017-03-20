@@ -176,7 +176,7 @@ class SimpleteForm extends HTMLElement {
 		// note that this means file uploads are not supported - which should be
 		// fine for our purposes here
 		let params = [];
-		payload.forEach((value, key) => {
+		[...payload].forEach((value, key) => {
 			let param = [key, value].map(encodeURIComponent).join("=");
 			params.push(param);
 		});
