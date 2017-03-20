@@ -66,15 +66,23 @@ class SimpleteForm extends HTMLElement {
 	}
 
 	onCycle(ev) {
-		let direction = {
-			38: "prev", // up
-			40: "next" // down
-		}[ev.which || ev.keyCode]; // XXX: fallback obsolete? use `#key`?
-		if(!direction) {
+		// ignore potential keyboard shortcuts
+		if(ev.ctrlKey || ev.altKey || ev.metaKey) {
 			return;
 		}
 
-		dispatchEvent(this, "simplete-nav", { direction });
+		switch(ev.code || ev.key || ev.keyCode) {
+		case "ArrowUp":
+		case "Numpad8":
+		case 38: // arrow up
+			dispatchEvent(this, "simplete-nav", { direction: "prev" });
+			break;
+		case "ArrowDown":
+		case "Numpad2":
+		case 40: // arrow down
+			dispatchEvent(this, "simplete-nav", { direction: "next" });
+			break;
+		}
 	}
 
 	onSelect(ev) {
