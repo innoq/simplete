@@ -1,7 +1,7 @@
 /* eslint-env browser */
 import { selectLast } from "./util";
 import { dispatchEvent, dispatchDOMEvent } from "uitil/dom/events";
-import bindMethodContext from "uitil/method_context";
+import bindMethods from "uitil/method_context";
 
 const TAG = "simplete-suggestions";
 const DEFAULTS = {
@@ -13,7 +13,7 @@ export default class SimpleteSuggestions extends HTMLElement {
 	constructor(self) {
 		self = super(self);
 
-		bindMethodContext(self, "onQuery", "onResults", "onCycle", "onConfirm");
+		bindMethods(self, "onQuery", "onResults", "onCycle", "onConfirm", "onAbort");
 
 		return self;
 	}
@@ -85,6 +85,10 @@ export default class SimpleteSuggestions extends HTMLElement {
 		}
 	}
 
+	onAbort(ev) {
+		this.render("");
+	}
+
 	onSelect(ev) {
 		this.selectItem(ev.target);
 		ev.preventDefault();
@@ -126,6 +130,7 @@ export default class SimpleteSuggestions extends HTMLElement {
 		root[op]("simplete-response", this.onResults);
 		root[op]("simplete-nav", this.onCycle);
 		root[op]("simplete-confirm", this.onConfirm);
+		root[op]("simplete-abort", this.onAbort);
 	}
 
 	get root() {

@@ -1,7 +1,7 @@
 /* eslint-env browser */
 import "./suggestions";
 import { dispatchEvent } from "uitil/dom/events";
-import bindMethodContext from "uitil/method_context";
+import bindMethods from "uitil/method_context";
 import debounce from "uitil/debounce";
 
 const DEFAULTS = {
@@ -18,7 +18,7 @@ class SimpleteForm extends HTMLElement {
 	constructor(self) {
 		self = super(self);
 
-		bindMethodContext(self, "onInput", "onResponse");
+		bindMethods(self, "onInput", "onResponse");
 
 		return self;
 	}
@@ -46,6 +46,7 @@ class SimpleteForm extends HTMLElement {
 			delete this.selecting;
 			return;
 		}
+		this.query = this.searchField.value;
 
 		let res = this.submit();
 		if(res === RESET) {
@@ -94,6 +95,16 @@ class SimpleteForm extends HTMLElement {
 				ev.preventDefault();
 			}
 			break;
+		case "Escape":
+		case 27: // Escape
+			let { query } = this;
+			if(query) { // restore original (pre-preview) input
+				this.searchField.value = query;
+				delete this.selecting;
+				dispatchEvent(this, "simplete-abort"); // TODO: rename?
+				ev.preventDefault();
+			}
+			break;
 		}
 	}
 
@@ -102,8 +113,6 @@ class SimpleteForm extends HTMLElement {
 		this.selecting = preview ? PREVIEW : true;
 		this.payload = this.serialize();
 		this.searchField.value = value;
-		// TODO: if `preview`, field value should be considered temporary - i.e. there
-		//       should be a way to undo and return to the original input (e.g. via ESC)
 	}
 
 	submit() {
