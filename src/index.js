@@ -16,7 +16,7 @@ class SimpleteForm extends HTMLElement {
 	constructor(self) {
 		self = super(self);
 
-		bindMethodContext(self, "onCycle", "onResponse");
+		bindMethodContext(self, "onInput", "onResponse");
 
 		return self;
 	}
@@ -35,7 +35,7 @@ class SimpleteForm extends HTMLElement {
 		this.addEventListener("input", onQuery);
 		this.addEventListener("change", onQuery);
 		this.addEventListener("simplete-selection", this.onSelect);
-		field.addEventListener("keydown", this.onCycle);
+		field.addEventListener("keydown", this.onInput);
 	}
 
 	onQuery(ev) {
@@ -66,7 +66,7 @@ class SimpleteForm extends HTMLElement {
 		dispatchEvent(this, "simplete-response", { html }); // TODO: rename event and payload?
 	}
 
-	onCycle(ev) {
+	onInput(ev) {
 		// ignore potential keyboard shortcuts
 		if(ev.ctrlKey || ev.altKey || ev.metaKey) {
 			return;
@@ -82,6 +82,11 @@ class SimpleteForm extends HTMLElement {
 		case "Numpad2":
 		case 40: // arrow down
 			dispatchEvent(this, "simplete-nav", { direction: "next" });
+			break;
+		case "Enter":
+		case 13: // Enter
+			dispatchEvent(this, "simplete-confirm"); // TODO: rename?
+			ev.preventDefault(); // XXX: optional? sometimes we do want the form submission
 			break;
 		}
 	}

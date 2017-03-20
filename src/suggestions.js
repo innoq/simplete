@@ -1,6 +1,6 @@
 /* eslint-env browser */
 import { selectLast } from "./util";
-import { dispatchEvent } from "uitil/dom/events";
+import { dispatchEvent, dispatchDOMEvent } from "uitil/dom/events";
 import bindMethodContext from "uitil/method_context";
 
 const TAG = "simplete-suggestions";
@@ -13,7 +13,7 @@ export default class SimpleteSuggestions extends HTMLElement {
 	constructor(self) {
 		self = super(self);
 
-		bindMethodContext(self, "onQuery", "onResults", "onCycle");
+		bindMethodContext(self, "onQuery", "onResults", "onCycle", "onConfirm");
 
 		return self;
 	}
@@ -76,6 +76,15 @@ export default class SimpleteSuggestions extends HTMLElement {
 		}
 	}
 
+	onConfirm(ev) {
+		let currentItem = this.querySelector(`${this.itemSelector}[aria-selected]`);
+		if(currentItem) {
+			// FIXME: this doesn't work for results (as opposed to suggestions) as
+			//        there we'd have to click on the link (or whatever) _within_
+			dispatchDOMEvent(currentItem, "click"); // XXX: hacky?
+		}
+	}
+
 	onSelect(ev) {
 		this.selectItem(ev.target);
 		ev.preventDefault();
@@ -116,6 +125,7 @@ export default class SimpleteSuggestions extends HTMLElement {
 		root[op]("simplete-query", this.onQuery);
 		root[op]("simplete-response", this.onResults);
 		root[op]("simplete-nav", this.onCycle);
+		root[op]("simplete-confirm", this.onConfirm);
 	}
 
 	get root() {
