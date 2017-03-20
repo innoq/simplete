@@ -4,8 +4,10 @@ import { dispatchEvent, dispatchDOMEvent } from "uitil/dom/events";
 import bindMethods from "uitil/method_context";
 
 const TAG = "simplete-suggestions";
-const DEFAULTS = {
-	itemSelector: "li" // TODO: document dynamic configuration
+const DEFAULTS = { // TODO: document dynamic configuration
+	itemSelector: "li",
+	fieldSelector: "input[type=hidden]",
+	resultSelector: "a"
 };
 
 export default class SimpleteSuggestions extends HTMLElement {
@@ -41,13 +43,20 @@ export default class SimpleteSuggestions extends HTMLElement {
 	onResults(ev) { // TODO: rename
 		this.render(ev.detail.html);
 
-		// determine item selector
-		let attr = "data-item-selector";
-		// NB: parent node is used to work around `querySelector` limitation WRT
-		//     immediate child elements -- XXX: not actually necessary?
-		let container = this.parentNode.querySelector(`${TAG} > [${attr}]`);
-		let selector = container && container.getAttribute(attr);
-		this.itemSelector = selector || DEFAULTS.itemSelector;
+		// determine and cache selectors
+		let attribs = {
+			itemSelector: "data-item-selector",
+			fieldSelector: "data-field-selector",
+			resultSelector: "data-result-selector"
+		};
+		Object.keys(attribs).forEach(prop => {
+			let attr = attribs[prop];
+			// NB: parent node is used to work around `querySelector` limitation
+			//     WRT immediate child elements -- XXX: not actually necessary?
+			let container = this.parentNode.querySelector(`${TAG} > [${attr}]`);
+			let selector = container && container.getAttribute(attr);
+			this[prop] = selector || DEFAULTS[prop];
+		});
 	}
 
 	onCycle(ev) {
@@ -77,7 +86,9 @@ export default class SimpleteSuggestions extends HTMLElement {
 	}
 
 	onConfirm(ev) {
-		let currentItem = this.querySelector(`${this.itemSelector}[aria-selected]`);
+		let selector = `${this.itemSelector}[aria-selected] ${this.resultSelector}`.
+			trim(); // just to be safe
+		let currentItem = this.querySelector(selector);
 		if(currentItem) {
 			// FIXME: this doesn't work for results (as opposed to suggestions) as
 			//        there we'd have to click on the link (or whatever) _within_
@@ -95,8 +106,7 @@ export default class SimpleteSuggestions extends HTMLElement {
 	}
 
 	selectItem(node, preview) {
-		// TODO: enfore `<a …>` for accessibility?
-		let field = node.querySelector("input[type=hidden]");
+		let field = node.querySelector(this.fieldSelector);
 		if(!field) {
 			return; // let the browser's default behavior kick in
 		}
