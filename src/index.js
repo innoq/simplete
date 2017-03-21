@@ -9,9 +9,7 @@ const DEFAULTS = {
 	queryDelay: 200 // milliseconds
 };
 
-// poor man's `Symbol`s
-const PREVIEW = {}; // TODO: rename
-const RESET = {};
+const RESET = {}; // poor man's `Symbol`
 
 class SimpleteForm extends HTMLElement {
 	// NB: `self` only required due to document-register-element polyfill
@@ -41,11 +39,6 @@ class SimpleteForm extends HTMLElement {
 	}
 
 	onQuery(ev) {
-		// ignore previews as well as redundant activation via selection
-		if(this.selecting) {
-			delete this.selecting;
-			return;
-		}
 		this.query = this.searchField.value;
 
 		let res = this.submit();
@@ -88,9 +81,10 @@ class SimpleteForm extends HTMLElement {
 			break;
 		case "Enter":
 		case 13: // Enter
-			// let the browser's default behavior (typically form submission)
-			// kick in unless we're in the process of navigating suggestions
-			if(this.navigating === PREVIEW) {
+			// suppress form submission (only) while navigating results -
+			// otherwise let the browser's default behavior kick in
+			if(this.navigating) {
+				delete this.navigating;
 				dispatchEvent(this, "simplete-confirm"); // TODO: rename?
 				ev.preventDefault();
 			}
@@ -100,7 +94,7 @@ class SimpleteForm extends HTMLElement {
 			let { query } = this;
 			if(query) { // restore original (pre-preview) input
 				this.searchField.value = query;
-				delete this.selecting;
+				delete this.navigating;
 				dispatchEvent(this, "simplete-abort"); // TODO: rename?
 				ev.preventDefault();
 			}
@@ -110,7 +104,9 @@ class SimpleteForm extends HTMLElement {
 
 	onSelect(ev) {
 		let { value, preview } = ev.detail;
-		this.selecting = preview ? PREVIEW : true;
+		if(preview) {
+			this.navigating = true;
+		}
 		this.payload = this.serialize();
 		this.searchField.value = value;
 	}

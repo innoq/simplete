@@ -90,8 +90,6 @@ export default class SimpleteSuggestions extends HTMLElement {
 			trim(); // just to be safe
 		let currentItem = this.querySelector(selector);
 		if(currentItem) {
-			// FIXME: this doesn't work for results (as opposed to suggestions) as
-			//        there we'd have to click on the link (or whatever) _within_
 			dispatchDOMEvent(currentItem, "click"); // XXX: hacky?
 		}
 	}
@@ -101,8 +99,12 @@ export default class SimpleteSuggestions extends HTMLElement {
 	}
 
 	onSelect(ev) {
-		this.selectItem(ev.target);
-		ev.preventDefault();
+		let field = this.selectItem(ev.target);
+		if(field) {
+			ev.preventDefault();
+		} else {
+			ev.target.click(); // XXX: hacky?
+		}
 	}
 
 	selectItem(node, preview) {
@@ -116,6 +118,7 @@ export default class SimpleteSuggestions extends HTMLElement {
 		}
 		let { name, value } = field;
 		dispatchEvent(this.root, "simplete-selection", { name, value, preview });
+		return true;
 	}
 
 	render(suggestions, pending) {
