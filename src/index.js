@@ -131,32 +131,14 @@ class SimpleteForm extends HTMLElement {
 		this.payload = payload;
 
 		let { uri, method } = this.formParams;
-		let options = {
-			method,
-			credentials: this.cors ? "include" : "same-origin"
-		};
-
 		// TODO: strip existing query string from URI, if any? should be invalid
 		if(method === "GET") {
-			uri = `${uri}?${payload}`;
+			return this.httpRequest(method, `${uri}?${payload}`);
 		} else {
-			options.headers = {
+			let headers = {
 				"Content-Type": "application/x-www-form-urlencoded"
 			};
-			options.body = payload;
-		}
-
-		return fetch(uri, options).
-			then(res => {
-				this.verifyResponse(res);
-				return res.text();
-			});
-	}
-
-	verifyResponse(res) {
-		let { status } = res;
-		if(status < 200 || status > 299) { // XXX: crude?
-			throw new Error(`unexpected response: ${status}`);
+			return this.httpRequest(method, uri, headers, payload);
 		}
 	}
 
@@ -181,6 +163,30 @@ class SimpleteForm extends HTMLElement {
 			params.push(param);
 		});
 		return params.join("&");
+	}
+
+	httpRequest(method, uri, headers, body) {
+		let options = {
+			method,
+			credentials: this.cors ? "include" : "same-origin"
+		};
+		if(headers) {
+			options.headers = headers;
+		}
+		if(body) {
+			options.body = body;
+		}
+		return fetch(uri, options).
+			then(res => {
+				this.verifyResponse(res.status);
+				return res.text();
+			});
+	}
+
+	verifyResponse(status) {
+		if(status < 200 || status > 299) { // XXX: crude?
+			throw new Error(`unexpected response: ${status}`);
+		}
 	}
 
 	get blank() {
