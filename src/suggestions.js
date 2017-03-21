@@ -4,7 +4,7 @@ import { dispatchEvent, dispatchDOMEvent } from "uitil/dom/events";
 import bindMethods from "uitil/method_context";
 
 const TAG = "simplete-suggestions";
-const DEFAULTS = { // TODO: document dynamic configuration
+const DEFAULTS = {
 	itemSelector: "li",
 	fieldSelector: "input[type=hidden]",
 	resultSelector: "a"
