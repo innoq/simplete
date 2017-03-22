@@ -136,7 +136,6 @@ polyfilled:
   [document-register-element](https://github.com/WebReflection/document-register-element)
 * `fetch` — suggested polyfill: [whatwg-fetch](https://github.com/github/fetch)
   or [unfetch](https://github.com/developit/unfetch)
-* `FormData`
 * `CustomEvent`
 * `Element#closest`
 * `Array#from`
