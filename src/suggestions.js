@@ -86,11 +86,11 @@ export default class SimpleteSuggestions extends HTMLElement {
 	}
 
 	onConfirm(ev) {
-		let selector = `${this.itemSelector}[aria-selected] ${this.resultSelector}`.
-			trim(); // just to be safe
-		let currentItem = this.querySelector(selector);
-		if(currentItem) {
-			dispatchDOMEvent(currentItem, "click"); // XXX: hacky?
+		let item = this.querySelector(`${this.itemSelector}[aria-selected]`);
+		let target = item.querySelector(this.fieldSelector) ||
+				item.querySelector(this.resultSelector);
+		if(target) {
+			dispatchDOMEvent(target, "click"); // XXX: hacky?
 		}
 	}
 
@@ -99,7 +99,8 @@ export default class SimpleteSuggestions extends HTMLElement {
 	}
 
 	onSelect(ev) {
-		let field = this.selectItem(ev.target);
+		let item = ev.target.closest(this.itemSelector);
+		let field = this.selectItem(item);
 		if(field) {
 			ev.preventDefault();
 		} else {
