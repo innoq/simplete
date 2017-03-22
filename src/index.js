@@ -1,5 +1,6 @@
 /* eslint-env browser */
 import "./suggestions";
+import { serializeForm } from "uitil/dom/forms";
 import { dispatchEvent } from "uitil/dom/events";
 import bindMethods from "uitil/method_context";
 import debounce from "uitil/debounce";
@@ -145,20 +146,11 @@ class SimpleteForm extends HTMLElement {
 			let clone = node.cloneNode(true);
 			form.appendChild(clone);
 		});
-		// exclude suggestions (which might contain hidden fields)
+		// exclude suggestions (which might also contain fields)
 		let sug = form.querySelector("simplete-suggestions");
 		sug.parentNode.removeChild(sug);
 
-		let payload = new FormData(form);
-		// stringify as `application/x-www-form-urlencoded` -- XXX: crude?
-		// note that this means file uploads are not supported - which should be
-		// fine for our purposes here
-		let params = [];
-		[...payload].forEach((value, key) => {
-			let param = [key, value].map(encodeURIComponent).join("=");
-			params.push(param);
-		});
-		return params.join("&");
+		return serializeForm(form);
 	}
 
 	httpRequest(method, uri, headers, body) {
