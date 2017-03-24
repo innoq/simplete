@@ -2,13 +2,14 @@
 
 Simplete ([demo](http://innoq.github.io/simplete/)) is a
 [custom element](https://www.webcomponents.org/introduction#custom-elements) for
-HTML-based autocompletion. It is suitable both for context completion and
-quicksearch results.
+autocompletion, using HTML fragments dynamically requested from the server. It
+is suitable both for context completion and quicksearch results.
 
-In contrast to most autocompletion libraries (see [alternatives](#alternatives)),
-Simplete does not rely on JSON responses from the server and client-side
-templating, but leaves rendering of results up to the server. This typically
-reduces complexity and increases flexibility.
+Simplete relies on established form semantics and leaves markup up to the
+server. In contrast to most autocompletion libraries (see
+[alternatives](#alternatives)), which typically rely on JSON responses and
+client-side templating, this typically reduces complexity and increases
+flexibility.
 
 In addition to progressive enhancement, accessibility has been a major driver
 in the design and implementation (largely thanks to
@@ -70,6 +71,10 @@ whatever seems appropriate (see (see [customization](#customization) below).
 
 The `styles` directory contains some basic suggested CSS while `demo/demo.css`
 contains a rudimentary theme.
+
+Note that when a result is selected, a `"simplete-selection"` custom event is
+triggered on the associated `<simplete-form>` element. The respective value is
+accessible via `event.detail.value`.
 
 
 ### Customization
@@ -135,7 +140,6 @@ polyfilled:
   [document-register-element](https://github.com/WebReflection/document-register-element)
 * `fetch` — suggested polyfill: [whatwg-fetch](https://github.com/github/fetch)
   or [unfetch](https://github.com/developit/unfetch)
-* `FormData`
 * `CustomEvent`
 * `Element#closest`
 * `Array#from`

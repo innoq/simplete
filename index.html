@@ -28,6 +28,27 @@
 
 	<script src="document-register-element.js"></script>
 	<script src="dist/bundle.js"></script>
+	<script>
+(function() {
+
+// illustrate event API
+
+var currentSelection;
+
+var info = document.createElement("p");
+info.style.position = "absolute";
+info.style.top = 0;
+info.style.right = 0;
+info.style.margin = "1em";
+document.body.appendChild(info);
+
+document.body.addEventListener("simplete-selection", function(ev) {
+	currentSelection = ev.detail.value;
+	info.textContent = "current selection: '" + currentSelection + "'";
+});
+
+}());
+	</script>
 </body>
 
 </html>

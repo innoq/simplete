@@ -86,13 +86,11 @@ export default class SimpleteSuggestions extends HTMLElement {
 	}
 
 	onConfirm(ev) {
-		let selector = `${this.itemSelector}[aria-selected] ${this.resultSelector}`.
-			trim(); // just to be safe
-		let currentItem = this.querySelector(selector);
-		if(currentItem) {
-			// FIXME: this doesn't work for results (as opposed to suggestions) as
-			//        there we'd have to click on the link (or whatever) _within_
-			dispatchDOMEvent(currentItem, "click"); // XXX: hacky?
+		let item = this.querySelector(`${this.itemSelector}[aria-selected]`);
+		let target = item.querySelector(this.fieldSelector) ||
+				item.querySelector(this.resultSelector);
+		if(target) {
+			dispatchDOMEvent(target, "click"); // XXX: hacky?
 		}
 	}
 
@@ -101,8 +99,13 @@ export default class SimpleteSuggestions extends HTMLElement {
 	}
 
 	onSelect(ev) {
-		this.selectItem(ev.target);
-		ev.preventDefault();
+		let item = ev.target.closest(this.itemSelector);
+		let field = this.selectItem(item);
+		if(field) {
+			ev.preventDefault();
+		} else {
+			ev.target.click(); // XXX: hacky?
+		}
 	}
 
 	selectItem(node, preview) {
@@ -115,7 +118,9 @@ export default class SimpleteSuggestions extends HTMLElement {
 			this.render("");
 		}
 		let { name, value } = field;
-		dispatchEvent(this.root, "simplete-selection", { name, value, preview });
+		dispatchEvent(this.root, "simplete-suggestion-selection",
+				{ name, value, preview });
+		return true;
 	}
 
 	render(suggestions, pending) {

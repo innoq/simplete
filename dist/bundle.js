@@ -233,12 +233,10 @@ var SimpleteSuggestions = function (_HTMLElement) {
 	}, {
 		key: "onConfirm",
 		value: function onConfirm(ev) {
-			var selector = (this.itemSelector + "[aria-selected] " + this.resultSelector).trim(); // just to be safe
-			var currentItem = this.querySelector(selector);
-			if (currentItem) {
-				// FIXME: this doesn't work for results (as opposed to suggestions) as
-				//        there we'd have to click on the link (or whatever) _within_
-				dispatchDOMEvent(currentItem, "click"); // XXX: hacky?
+			var item = this.querySelector(this.itemSelector + "[aria-selected]");
+			var target = item.querySelector(this.fieldSelector) || item.querySelector(this.resultSelector);
+			if (target) {
+				dispatchDOMEvent(target, "click"); // XXX: hacky?
 			}
 		}
 	}, {
@@ -249,8 +247,13 @@ var SimpleteSuggestions = function (_HTMLElement) {
 	}, {
 		key: "onSelect",
 		value: function onSelect(ev) {
-			this.selectItem(ev.target);
-			ev.preventDefault();
+			var item = ev.target.closest(this.itemSelector);
+			var field = this.selectItem(item);
+			if (field) {
+				ev.preventDefault();
+			} else {
+				ev.target.click(); // XXX: hacky?
+			}
 		}
 	}, {
 		key: "selectItem",
@@ -266,7 +269,8 @@ var SimpleteSuggestions = function (_HTMLElement) {
 			var name = field.name,
 			    value = field.value;
 
-			dispatchEvent(this.root, "simplete-selection", { name: name, value: value, preview: preview });
+			dispatchEvent(this.root, "simplete-suggestion-selection", { name: name, value: value, preview: preview });
+			return true;
 		}
 	}, {
 		key: "render",
@@ -309,6 +313,71 @@ var SimpleteSuggestions = function (_HTMLElement) {
 
 customElements.define(TAG, SimpleteSuggestions);
 
+// NB: not necessary when using ES6 spread syntax: `[...nodes].map(…)`
+function find(node, selector) {
+	let nodes = node.querySelectorAll(selector);
+	return [].slice.call(nodes);
+}
+
+/* eslint-env browser */
+// stringify form data as `application/x-www-form-urlencoded`
+// required due to insufficient browser support for `FormData`
+// NB: only supports a subset of form fields, notably excluding buttons and file inputs
+function serializeForm(form) {
+	let selector = ["input", "textarea", "select"].
+		map(tag => `${tag}[name]:not(:disabled)`).join(", ");
+	let radios = {};
+	return find(form, selector).reduce((params, node) => {
+		let { name } = node;
+		let value;
+		switch(node.nodeName.toLowerCase()) {
+		case "textarea":
+			value = node.value;
+			break;
+		case "select":
+			value = node.multiple ?
+				find(node, "option:checked").map(opt => opt.value) :
+				node.value;
+			break;
+		case "input":
+			switch(node.type) {
+			case "file":
+				console.warn("ignoring unsupported file-input field");
+				break;
+			case "checkbox":
+				if(node.checked) {
+					value = node.value;
+				}
+				break;
+			case "radio":
+				if(!radios[name]) {
+					value = form.
+						querySelector(`input[type=radio][name=${name}]:checked`).
+						value;
+					radios[name] = true;
+				}
+				break;
+			default:
+				value = node.value;
+				break;
+			}
+			break;
+		}
+
+		if(value !== undefined) {
+			let values = value || [""];
+			if(!values.pop) {
+				values = [values];
+			}
+			values.forEach(value => {
+				let param = [name, value].map(encodeURIComponent).join("=");
+				params.push(param);
+			});
+		}
+		return params;
+	}, []).join("&");
+}
+
 // limits the rate of `fn` invocations
 // `delay` is the rate limit in milliseconds
 // `ctx` (optional) is the function's execution context (i.e. `this`)
@@ -340,9 +409,7 @@ var DEFAULTS = {
 	queryDelay: 200 // milliseconds
 };
 
-// poor man's `Symbol`s
-var PREVIEW = {}; // TODO: rename
-var RESET = {};
+var RESET = {}; // poor man's `Symbol`
 
 var SimpleteForm = function (_HTMLElement) {
 	inherits(SimpleteForm, _HTMLElement);
@@ -376,7 +443,7 @@ var SimpleteForm = function (_HTMLElement) {
 			var onQuery = debounce(this.queryDelay, this, this.onQuery);
 			this.addEventListener("input", onQuery);
 			this.addEventListener("change", onQuery);
-			this.addEventListener("simplete-selection", this.onSelect);
+			this.addEventListener("simplete-suggestion-selection", this.onSelect);
 			field.addEventListener("keydown", this.onInput);
 		}
 	}, {
@@ -384,11 +451,6 @@ var SimpleteForm = function (_HTMLElement) {
 		value: function onQuery(ev) {
 			var _this2 = this;
 
-			// ignore previews as well as redundant activation via selection
-			if (this.selecting) {
-				delete this.selecting;
-				return;
-			}
 			this.query = this.searchField.value;
 
 			var res = this.submit();
@@ -438,9 +500,10 @@ var SimpleteForm = function (_HTMLElement) {
 				case "Enter":
 				case 13:
 					// Enter
-					// let the browser's default behavior (typically form submission)
-					// kick in unless we're in the process of navigating suggestions
-					if (this.navigating === PREVIEW) {
+					// suppress form submission (only) while navigating results -
+					// otherwise let the browser's default behavior kick in
+					if (this.navigating) {
+						delete this.navigating;
 						dispatchEvent(this, "simplete-confirm"); // TODO: rename?
 						ev.preventDefault();
 					}
@@ -453,7 +516,7 @@ var SimpleteForm = function (_HTMLElement) {
 					if (query) {
 						// restore original (pre-preview) input
 						this.searchField.value = query;
-						delete this.selecting;
+						delete this.navigating;
 						dispatchEvent(this, "simplete-abort"); // TODO: rename?
 						ev.preventDefault();
 					}
@@ -467,9 +530,13 @@ var SimpleteForm = function (_HTMLElement) {
 			    value = _ev$detail.value,
 			    preview = _ev$detail.preview;
 
-			this.selecting = preview ? PREVIEW : true;
+			if (preview) {
+				this.navigating = true;
+			}
 			this.payload = this.serialize();
 			this.searchField.value = value;
+			// notify external observers
+			dispatchEvent(this, "simplete-selection", { value: value }, { bubbles: true });
 		}
 	}, {
 		key: "submit",
@@ -511,20 +578,11 @@ var SimpleteForm = function (_HTMLElement) {
 				var clone = node.cloneNode(true);
 				form.appendChild(clone);
 			});
-			// exclude suggestions (which might contain hidden fields)
+			// exclude suggestions (which might also contain fields)
 			var sug = form.querySelector("simplete-suggestions");
 			sug.parentNode.removeChild(sug);
 
-			var payload = new FormData(form);
-			// stringify as `application/x-www-form-urlencoded` -- XXX: crude?
-			// note that this means file uploads are not supported - which should be
-			// fine for our purposes here
-			var params = [];
-			[].concat(toConsumableArray(payload)).forEach(function (value, key) {
-				var param = [key, value].map(encodeURIComponent).join("=");
-				params.push(param);
-			});
-			return params.join("&");
+			return serializeForm(form);
 		}
 	}, {
 		key: "httpRequest",
