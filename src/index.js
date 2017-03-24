@@ -35,7 +35,7 @@ class SimpleteForm extends HTMLElement {
 		let onQuery = debounce(this.queryDelay, this, this.onQuery);
 		this.addEventListener("input", onQuery);
 		this.addEventListener("change", onQuery);
-		this.addEventListener("simplete-selection", this.onSelect);
+		this.addEventListener("simplete-suggestion-selection", this.onSelect);
 		field.addEventListener("keydown", this.onInput);
 	}
 
@@ -110,6 +110,8 @@ class SimpleteForm extends HTMLElement {
 		}
 		this.payload = this.serialize();
 		this.searchField.value = value;
+		// notify external observers
+		dispatchEvent(this, "simplete-selection", { value }, { bubbles: true });
 	}
 
 	submit() {

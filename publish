@@ -31,3 +31,6 @@ else
 	cd ..
 fi
 rm -r tmp_pub
+
+echo "✓ done"
+echo "please remember to update the demo accordingly"

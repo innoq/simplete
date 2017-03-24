@@ -72,6 +72,10 @@ whatever seems appropriate (see (see [customization](#customization) below).
 The `styles` directory contains some basic suggested CSS while `demo/demo.css`
 contains a rudimentary theme.
 
+Note that when a result is selected, a `"simplete-selection"` custom event is
+triggered on the associated `<simplete-form>` element. The respective value is
+accessible via `event.detail.value`.
+
 
 ### Customization
 

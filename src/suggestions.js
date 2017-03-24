@@ -118,7 +118,8 @@ export default class SimpleteSuggestions extends HTMLElement {
 			this.render("");
 		}
 		let { name, value } = field;
-		dispatchEvent(this.root, "simplete-selection", { name, value, preview });
+		dispatchEvent(this.root, "simplete-suggestion-selection",
+				{ name, value, preview });
 		return true;
 	}
 
