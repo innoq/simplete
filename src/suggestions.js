@@ -100,6 +100,10 @@ export default class SimpleteSuggestions extends HTMLElement {
 
 	onSelect(ev) {
 		let item = ev.target.closest(this.itemSelector);
+		if(!item) { // not a result
+			return;
+		}
+
 		let field = this.selectItem(item);
 		if(field) {
 			ev.preventDefault();
