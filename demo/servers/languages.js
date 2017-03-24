@@ -1,8 +1,4 @@
-let http = require("http");
 let url = require("url");
-
-const HOST = "0.0.0.0";
-const PORT = 3003;
 
 // cf. http://pypl.github.io/PYPL.html
 const LANGUAGES = [
@@ -12,7 +8,7 @@ const LANGUAGES = [
 ];
 const WIKIPEDIA = "https://en.wikipedia.org/wiki/Special:Search?search=";
 
-let server = http.createServer((req, res) => {
+exports.endpoint = function(req, res) {
 	let query = url.parse(req.url, true).query;
 	query = query && query.q;
 
@@ -43,8 +39,4 @@ let server = http.createServer((req, res) => {
 		"Content-Type": "text/html"
 	});
 	res.end(html);
-});
-
-server.listen(PORT, HOST, () => {
-	console.log(`→ http://${HOST}:${PORT}`); // eslint-disable-line no-console
-});
+};
