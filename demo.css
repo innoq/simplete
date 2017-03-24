@@ -3,6 +3,7 @@ body {
 }
 
 simplete-suggestions {
+	z-index: 9;
 	border: 1px solid #AAA;
 	padding: 5px;
 	background-color: #EEE;

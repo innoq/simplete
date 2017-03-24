@@ -24,11 +24,6 @@ function dispatchEvent(emitter, name, payload, options = {}) {
 
 // generate a native DOM event (e.g. simulating a click interaction)
 // adapted from http://stackoverflow.com/a/2706236
-function dispatchDOMEvent(node, name) {
-	let ev = document.createEvent("Events");
-	ev.initEvent(name, true, false);
-	node.dispatchEvent(ev);
-}
 
 // binds the specified `methods`, as identified by their names, to the given `ctx` object
 function bindMethodContext(ctx, ...methods) {
@@ -236,7 +231,7 @@ var SimpleteSuggestions = function (_HTMLElement) {
 			var item = this.querySelector(this.itemSelector + "[aria-selected]");
 			var target = item.querySelector(this.fieldSelector) || item.querySelector(this.resultSelector);
 			if (target) {
-				dispatchDOMEvent(target, "click"); // XXX: hacky?
+				target.click(); // XXX: hacky?
 			}
 		}
 	}, {
@@ -263,19 +258,20 @@ var SimpleteSuggestions = function (_HTMLElement) {
 	}, {
 		key: "selectItem",
 		value: function selectItem(node, preview) {
-			var field = node.querySelector(this.fieldSelector);
-			if (!field) {
-				return; // let the browser's default behavior kick in
-			}
-
 			if (!preview) {
 				this.render("");
 			}
-			var name = field.name,
-			    value = field.value;
 
-			dispatchEvent(this.root, "simplete-suggestion-selection", { name: name, value: value, preview: preview });
-			return true;
+			var payload = { preview: preview };
+			var field = node.querySelector(this.fieldSelector);
+			if (field) {
+				var name = field.name,
+				    value = field.value;
+
+				Object.assign(payload, { name: name, value: value });
+			}
+			dispatchEvent(this.root, "simplete-suggestion-selection", payload);
+			return !!field;
 		}
 	}, {
 		key: "render",
@@ -325,9 +321,6 @@ function find(node, selector) {
 }
 
 /* eslint-env browser */
-// stringify form data as `application/x-www-form-urlencoded`
-// required due to insufficient browser support for `FormData`
-// NB: only supports a subset of form fields, notably excluding buttons and file inputs
 function serializeForm(form) {
 	let selector = ["input", "textarea", "select"].
 		map(tag => `${tag}[name]:not(:disabled)`).join(", ");
@@ -538,10 +531,15 @@ var SimpleteForm = function (_HTMLElement) {
 			if (preview) {
 				this.navigating = true;
 			}
-			this.payload = this.serialize();
-			this.searchField.value = value;
+			if (value) {
+				this.searchField.value = value;
+				this.payload = this.serialize();
+			}
+
 			// notify external observers
-			dispatchEvent(this, "simplete-selection", { value: value }, { bubbles: true });
+			if (value && !preview) {
+				dispatchEvent(this, "simplete-selection", { value: value }, { bubbles: true });
+			}
 		}
 	}, {
 		key: "submit",
@@ -632,11 +630,32 @@ var SimpleteForm = function (_HTMLElement) {
 	}, {
 		key: "formParams",
 		get: function get$$1() {
-			var method = (this.getAttribute("method") || "GET").toUpperCase();
+			var form = void 0;
+
+			var uri = this.getAttribute("action");
+			if (!uri) {
+				form = this.form;
+				uri = form.getAttribute("action");
+			}
+
+			var method = this.getAttribute("method");
+			if (!method) {
+				if (!form) {
+					form = this.form;
+				}
+				method = form.method || "GET";
+			}
+
 			return {
-				uri: this.getAttribute("action"),
-				method: method
+				uri: uri,
+				method: method.toUpperCase(),
+				inherited: !!form
 			};
+		}
+	}, {
+		key: "form",
+		get: function get$$1() {
+			return this.closest("form");
 		}
 	}, {
 		key: "queryDelay",
