@@ -19,6 +19,20 @@ in the design and implementation (largely thanks to
 Usage
 -----
 
+We start out with a fairly straightforward form:
+
+```html
+<form action="/search" method="get">
+    <simplete-form>
+        <input type="search" name="query">
+    </simplete-form>
+
+    <button>search</button>
+</form>
+```
+
+Or, if we want to target different resources:
+
 ```html
 <form action="/search" method="get">
     <simplete-form action="/search/suggestions" method="get">
@@ -30,8 +44,9 @@ Usage
 ```
 
 Typing into that search field will result in a form submission (i.e. a
-`GET /search/suggestions?query=…` AJAX request). Typically the server would
-respond with HTML like the following:
+`GET /search/suggestions?query=…` AJAX request).
+
+Typically the server would respond with HTML like the following:
 
 ```html
 <ol>
@@ -85,8 +100,9 @@ accessible via `event.detail.value`.
   identifying a search field (must be a unique child element)
 * `query-delay` (defaults to `200`) is the number of milliseconds to wait before
   triggering an HTTP request
-* `cors` is a boolean attribute which, if present, activates cross-origin
-  requests
+* `cors` is a boolean attribute which, if present, ensures
+  [credentials](https://fetch.spec.whatwg.org/#credentials) are included with
+  cross-origin requests
 
 ```html
 <simplete-form search-field-selector="textarea" query-delay="100" cors>

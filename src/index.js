@@ -189,11 +189,31 @@ class SimpleteForm extends HTMLElement {
 	}
 
 	get formParams() {
-		let method = (this.getAttribute("method") || "GET").toUpperCase();
+		let form;
+
+		let uri = this.getAttribute("action");
+		if(!uri) {
+			form = this.form;
+			uri = form.getAttribute("action");
+		}
+
+		let method = this.getAttribute("method");
+		if(!method) {
+			if(!form) {
+				form = this.form;
+			}
+			method = form.method || "GET";
+		}
+
 		return {
-			uri: this.getAttribute("action"),
-			method
+			uri,
+			method: method.toUpperCase(),
+			inherited: !!form
 		};
+	}
+
+	get form() {
+		return this.closest("form");
 	}
 
 	get queryDelay() {

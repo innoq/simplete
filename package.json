@@ -4,7 +4,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "start": "wrollup",
-    "test": "eslint --cache *.js src && echo ✓",
+    "test": "eslint --cache *.js src demo/servers && echo ✓",
     "compile": "rollup --config"
   },
   "dependencies": {
