@@ -248,6 +248,11 @@ var SimpleteSuggestions = function (_HTMLElement) {
 		key: "onSelect",
 		value: function onSelect(ev) {
 			var item = ev.target.closest(this.itemSelector);
+			if (!item) {
+				// not a result
+				return;
+			}
+
 			var field = this.selectItem(item);
 			if (field) {
 				ev.preventDefault();
