@@ -159,6 +159,7 @@ polyfilled:
 * `CustomEvent`
 * `Element#closest`
 * `Array#from`
+* `Object.assign`
 
 The Financial Times's excellent
 [polyfill service](https://github.com/Financial-Times/polyfill-service) is a

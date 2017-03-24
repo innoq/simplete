@@ -108,10 +108,15 @@ class SimpleteForm extends HTMLElement {
 		if(preview) {
 			this.navigating = true;
 		}
-		this.payload = this.serialize();
-		this.searchField.value = value;
+		if(value) {
+			this.searchField.value = value;
+			this.payload = this.serialize();
+		}
+
 		// notify external observers
-		dispatchEvent(this, "simplete-selection", { value }, { bubbles: true });
+		if(value && !preview) {
+			dispatchEvent(this, "simplete-selection", { value }, { bubbles: true });
+		}
 	}
 
 	submit() {

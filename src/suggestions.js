@@ -1,6 +1,6 @@
 /* eslint-env browser */
 import { selectLast } from "./util";
-import { dispatchEvent, dispatchDOMEvent } from "uitil/dom/events";
+import { dispatchEvent } from "uitil/dom/events";
 import bindMethods from "uitil/method_context";
 
 const TAG = "simplete-suggestions";
@@ -90,7 +90,7 @@ export default class SimpleteSuggestions extends HTMLElement {
 		let target = item.querySelector(this.fieldSelector) ||
 				item.querySelector(this.resultSelector);
 		if(target) {
-			dispatchDOMEvent(target, "click"); // XXX: hacky?
+			target.click(); // XXX: hacky?
 		}
 	}
 
@@ -113,18 +113,18 @@ export default class SimpleteSuggestions extends HTMLElement {
 	}
 
 	selectItem(node, preview) {
-		let field = node.querySelector(this.fieldSelector);
-		if(!field) {
-			return; // let the browser's default behavior kick in
-		}
-
 		if(!preview) {
 			this.render("");
 		}
-		let { name, value } = field;
-		dispatchEvent(this.root, "simplete-suggestion-selection",
-				{ name, value, preview });
-		return true;
+
+		let payload = { preview };
+		let field = node.querySelector(this.fieldSelector);
+		if(field) {
+			let { name, value } = field;
+			Object.assign(payload, { name, value });
+		}
+		dispatchEvent(this.root, "simplete-suggestion-selection", payload);
+		return !!field;
 	}
 
 	render(suggestions, pending) {
