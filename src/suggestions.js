@@ -114,6 +114,7 @@ export default class SimpleteSuggestions extends HTMLElement {
 
 	selectItem(node, preview) {
 		if(!preview) {
+			node = node.cloneNode(true); // prevents IE 11 from discarding child elements
 			this.render("");
 		}
 
