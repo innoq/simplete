@@ -212,8 +212,7 @@ class SimpleteForm extends HTMLElement {
 
 		return {
 			uri,
-			method: method.toUpperCase(),
-			inherited: !!form
+			method: method.toUpperCase()
 		};
 	}
 
