@@ -173,15 +173,11 @@ class SimpleteForm extends HTMLElement {
 		}
 		return fetch(uri, options).
 			then(res => {
-				this.verifyResponse(res.status);
+				if(!res.ok) {
+					throw new Error(`unexpected response: ${res.status}`);
+				}
 				return res.text();
 			});
-	}
-
-	verifyResponse(status) {
-		if(status < 200 || status > 299) { // XXX: crude?
-			throw new Error(`unexpected response: ${status}`);
-		}
 	}
 
 	get blank() {
