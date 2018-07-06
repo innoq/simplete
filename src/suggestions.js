@@ -3,7 +3,7 @@ import { selectLast } from "./util";
 import { dispatchEvent } from "uitil/dom/events";
 import bindMethods from "uitil/method_context";
 
-const TAG = "simplete-suggestions";
+export const TAG = "simplete-suggestions";
 const DEFAULTS = {
 	itemSelector: "li",
 	fieldSelector: "input[type=hidden]",
@@ -156,6 +156,4 @@ export default class SimpleteSuggestions extends HTMLElement {
 	get root() {
 		return this.closest("simplete-form");
 	}
-};
-
-customElements.define(TAG, SimpleteSuggestions);
+}
