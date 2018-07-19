@@ -65,8 +65,8 @@ export default class SimpleteSuggestions extends HTMLElement {
 
 		let currentItem = this.querySelector(`${selector}[aria-selected]`);
 		if(!currentItem) { // select edge item, if any
-			currentItem = next ? this.querySelector(selector) :
-					selectLast(this, selector);
+			currentItem = next ? // eslint-disable-next-line indent
+					this.querySelector(selector) : selectLast(this, selector);
 		} else { // select adjacent item or wrap around
 			currentItem.removeAttribute("aria-selected");
 

@@ -92,9 +92,8 @@ export default class SimpleteForm extends HTMLElement {
 			break;
 		case "Escape":
 		case 27: // Escape
-			let { query } = this;
-			if(query) { // restore original (pre-preview) input
-				this.searchField.value = query;
+			if(this.query) { // restore original (pre-preview) input
+				this.searchField.value = this.query;
 				delete this.navigating;
 				dispatchEvent(this, "simplete-abort"); // TODO: rename?
 				ev.preventDefault();
@@ -135,13 +134,12 @@ export default class SimpleteForm extends HTMLElement {
 		this.payload = payload;
 
 		let { uri, method } = this.formParams;
+		let headers = { Accept: "text/html; fragment=true" };
 		// TODO: strip existing query string from URI, if any? should be invalid
 		if(method === "GET") {
-			return this.httpRequest(method, `${uri}?${payload}`);
+			return this.httpRequest(method, `${uri}?${payload}`, headers);
 		} else {
-			let headers = {
-				"Content-Type": "application/x-www-form-urlencoded"
-			};
+			headers["Content-Type"] = "application/x-www-form-urlencoded";
 			return this.httpRequest(method, uri, headers, payload);
 		}
 	}

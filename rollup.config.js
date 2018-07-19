@@ -47,4 +47,4 @@ function generateConfig(entryPoint, target, options = {}) {
 	}
 
 	return cfg;
-};
+}
