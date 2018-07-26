@@ -1,6 +1,6 @@
 {
 	"name": "simplete",
-	"version": "1.5.0",
+	"version": "1.6.0",
 	"description": "HTML-based autocompletion",
 	"author": "FND",
 	"license": "Apache-2.0",
@@ -12,8 +12,8 @@
 	"bugs": {
 		"url": "https://github.com/innoq/simplete/issues"
 	},
-	"main": "src/index.js",
-	"module": "simplete.js",
+	"main": "simplete.js",
+	"module": "index.js",
 	"scripts": {
 		"start": "faucet --watch",
 		"test": "eslint --cache *.js src demo/servers && echo ✓",
@@ -24,7 +24,7 @@
 	},
 	"devDependencies": {
 		"eslint-config-fnd": "^1.6.0",
-		"faucet-pipeline-esnext": "^1.0.0-rc.7",
+		"faucet-pipeline-esnext": "^1.0.0-rc.8",
 		"release-util-fnd": "^1.1.1"
 	}
 }
