@@ -147,7 +147,7 @@ export default class SimpleteForm extends HTMLElement {
 	serialize() {
 		// generate temporary form
 		let form = document.createElement("form");
-		[...this.children].forEach(node => {
+		[].forEach.call(this.children, node => {
 			let clone = node.cloneNode(true);
 			form.appendChild(clone);
 		});

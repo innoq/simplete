@@ -1,6 +1,7 @@
 /* eslint-env browser */
 import { selectLast } from "./util";
 import { dispatchEvent } from "uitil/dom/events";
+import { find } from "uitil/dom";
 import bindMethods from "uitil/method_context";
 
 export const TAG = "simplete-suggestions";
@@ -70,7 +71,7 @@ export default class SimpleteSuggestions extends HTMLElement {
 		} else { // select adjacent item or wrap around
 			currentItem.removeAttribute("aria-selected");
 
-			let items = [...this.querySelectorAll(selector)];
+			let items = find(this, selector);
 			let index = items.indexOf(currentItem);
 			if(next) {
 				currentItem = items[index + 1] || items[0];
