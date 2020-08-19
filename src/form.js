@@ -7,9 +7,9 @@ import debounce from "uitil/debounce";
 
 export const TAG = "simplete-form";
 const DEFAULTS = {
-	searchFieldSelector: "input[type=search]",
-	queryDelay: 200, // milliseconds
-	minLength: 1
+	"search-field-selector": "input[type=search]",
+	"query-delay": 200, // milliseconds
+	"min-length": 1
 };
 
 const RESET = {}; // poor man's `Symbol`
@@ -186,13 +186,19 @@ export default class SimpleteForm extends HTMLElement {
 			});
 	}
 
+	_parseInt(attr) {
+		let value = this.getAttribute(attr);
+		return value ? parseInt(value, 10) : DEFAULTS[attr];
+	}
+
 	get blank() {
 		return !this.searchField.value.trim();
 	}
 
 	get searchField() { // TODO: memoize, resetting cached value on blur?
-		let selector = this.getAttribute("search-field-selector");
-		return this.querySelector(selector || DEFAULTS.searchFieldSelector);
+		let attr = "search-field-selector";
+		let selector = this.getAttribute(attr);
+		return this.querySelector(selector || DEFAULTS[attr]);
 	}
 
 	get formParams() {
@@ -223,13 +229,11 @@ export default class SimpleteForm extends HTMLElement {
 	}
 
 	get queryDelay() {
-		let value = this.getAttribute("query-delay");
-		return value ? parseInt(value, 10) : DEFAULTS.queryDelay;
+		return this._parseInt("query-delay");
 	}
 
 	get minLength() {
-		let value = this.getAttribute("min-length");
-		return value ? parseInt(value, 10) : DEFAULTS.minLength;
+		return this._parseInt("min-length");
 	}
 
 	get cors() {
