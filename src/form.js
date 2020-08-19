@@ -8,7 +8,8 @@ import debounce from "uitil/debounce";
 export const TAG = "simplete-form";
 const DEFAULTS = {
 	searchFieldSelector: "input[type=search]",
-	queryDelay: 200 // milliseconds
+	queryDelay: 200, // milliseconds
+	minLength: 1
 };
 
 const RESET = {}; // poor man's `Symbol`
@@ -129,6 +130,10 @@ export default class SimpleteForm extends HTMLElement {
 			delete this.payload;
 			return RESET;
 		}
+		// ignore unless input matches threshold
+		if(this.query.length < this.minLength) {
+			return;
+		}
 		// guard against redundant requests
 		let payload = this.serialize();
 		if(payload === this.payload) {
@@ -220,6 +225,11 @@ export default class SimpleteForm extends HTMLElement {
 	get queryDelay() {
 		let value = this.getAttribute("query-delay");
 		return value ? parseInt(value, 10) : DEFAULTS.queryDelay;
+	}
+
+	get minLength() {
+		let value = this.getAttribute("min-length");
+		return value ? parseInt(value, 10) : DEFAULTS.minLength;
 	}
 
 	get cors() {
