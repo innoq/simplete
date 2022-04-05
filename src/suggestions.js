@@ -1,5 +1,5 @@
 /* eslint-env browser */
-import { selectLast } from "./util";
+import { scrollIfNecessary, selectLast } from "./util";
 import { dispatchEvent } from "uitil/dom/events";
 import { find } from "uitil/dom";
 import bindMethods from "uitil/method_context";
@@ -84,6 +84,8 @@ export default class SimpleteSuggestions extends HTMLElement {
 			currentItem.setAttribute("aria-selected", "true");
 			this.selectItem(currentItem, true);
 		}
+
+		scrollIfNecessary(currentItem);
 	}
 
 	onConfirm(ev) {

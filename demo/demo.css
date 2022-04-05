@@ -9,6 +9,11 @@ simplete-suggestions {
 	background-color: #EEE;
 }
 
+simplete-suggestions ul {
+	max-height: 8rem;
+	overflow: auto;
+}
+
 simplete-form[aria-busy=true],
 simplete-suggestions[aria-busy=true] {
 	opacity: 0.2;
