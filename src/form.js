@@ -50,7 +50,7 @@ export default class SimpleteForm extends HTMLElement {
 			this.setAttribute("aria-busy", "true");
 
 			res.then(this.onResponse).
-				// eslint-disable-next-line handle-callback-err
+				// eslint-disable-next-line node/handle-callback-err
 				catch(err => void this.onResponse(null));
 
 			dispatchEvent(this, "simplete-query");
