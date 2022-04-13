@@ -6,6 +6,7 @@ import bindMethods from "uitil/method_context";
 
 export const TAG = "simplete-suggestions";
 const DEFAULTS = {
+	rootSelector: "simplete-form",
 	itemSelector: "li",
 	fieldSelector: "input[type=hidden]",
 	resultSelector: "a"
@@ -157,6 +158,7 @@ export default class SimpleteSuggestions extends HTMLElement {
 	}
 
 	get root() {
-		return this.closest("simplete-form");
+		let selector = this.getAttribute("root-selector") || DEFAULTS.rootSelector;
+		return this.closest(selector);
 	}
 }
