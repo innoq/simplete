@@ -84,9 +84,8 @@ export default class SimpleteSuggestions extends HTMLElement {
 		if(currentItem) {
 			currentItem.setAttribute("aria-selected", "true");
 			this.selectItem(currentItem, true);
+			scrollIfNecessary(currentItem);
 		}
-
-		scrollIfNecessary(currentItem);
 	}
 
 	onConfirm(ev) {
