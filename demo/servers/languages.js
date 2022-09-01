@@ -13,7 +13,7 @@ const LANGUAGES = [
 const WIKIPEDIA = "https://en.wikipedia.org/wiki/Special:Search?search=";
 
 let server = http.createServer((req, res) => {
-	let query = url.parse(req.url, true).query;
+	let query = url.parse(req.url, true).query; // eslint-disable-line node/no-deprecated-api
 	query = query && query.q;
 
 	let candidates = LANGUAGES;
