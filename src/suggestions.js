@@ -12,6 +12,8 @@ const DEFAULTS = {
 	resultSelector: "a"
 };
 
+const FOCUSSABLE_ELEMENTS = "button, [href], input, select, textarea, [tabindex]:not([tabindex='-1']";
+
 export default class SimpleteSuggestions extends HTMLElement {
 	// NB: `self` only required due to document-register-element polyfill
 	constructor(self) {
@@ -59,6 +61,9 @@ export default class SimpleteSuggestions extends HTMLElement {
 			let selector = container && container.getAttribute(attr);
 			this[prop] = selector || DEFAULTS[prop];
 		});
+
+		find(this, FOCUSSABLE_ELEMENTS).
+			forEach(el => el.setAttribute("tabindex", "-1"));
 	}
 
 	onCycle(ev) {
