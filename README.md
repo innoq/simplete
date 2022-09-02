@@ -62,9 +62,9 @@ Typically the server would respond with HTML like the following:
 ```
 
 Selecting an item from that list will populate the search field with the
-corresponding value, which may subsequently be used to submit the surrounding
-form. (Note that keyboard-based submission of the surrounding form is only
-suppressed while navigating results.)
+corresponding value or the text content of the item, which may subsequently be
+used to submit the surrounding form. (Note that keyboard-based submission of
+the surrounding form is only suppressed while navigating results.)
 
 The server might also choose to respond with immediate results rather than query
 suggestions:
@@ -90,7 +90,6 @@ contains a rudimentary theme.
 Note that when a result is selected, a `"simplete-selection"` custom event is
 triggered on the associated `<simplete-form>` element. The respective value is
 accessible via `event.detail.value`.
-
 
 ### Customization
 
@@ -157,6 +156,14 @@ corresponding
 because we have performed screenreader tests for this markup
 (`aria-label` was necessary in order for the list of suggestions to be
 announced as a list in NVDA).
+
+We also recommend performing usability testing for your implementation of the
+component. The general expectation for a component like this is that selecting
+a result from the list of suggestions will behave in the same way as if that
+suggestion were entered into the search field and the form were submitted. If
+your links do not behave accordingly (e.g. if your search suggestions are links
+to a concrete page instead of to a list of search suggestions), you will need
+to find a way to communicate this to the user.
 
 
 Dependencies

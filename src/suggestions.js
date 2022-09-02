@@ -141,7 +141,10 @@ export default class SimpleteSuggestions extends HTMLElement {
 		if(field) {
 			let { name, value } = field;
 			Object.assign(payload, { name, value });
+		} else if(node && node.textContent) {
+			Object.assign(payload, { value: node.textContent.trim() });
 		}
+
 		dispatchEvent(this.root, "simplete-suggestion-selection", payload);
 		return !!field;
 	}
