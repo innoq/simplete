@@ -1,6 +1,6 @@
 {
 	"name": "simplete",
-	"version": "1.9.0",
+	"version": "1.9.1",
 	"description": "HTML-based autocompletion",
 	"author": "FND",
 	"license": "Apache-2.0",
@@ -23,7 +23,7 @@
 		"uitil": "^2.8.0"
 	},
 	"devDependencies": {
-		"eslint-config-fnd": "^1.12.0",
+		"eslint-config-fnd": "^1.13.0",
 		"faucet-pipeline-esnext": "^2.1.8",
 		"release-util-fnd": "^3.0.0"
 	}
