@@ -49,7 +49,7 @@ Typing into that search field will result in a form submission (i.e. a
 Typically the server would respond with HTML like the following:
 
 ```html
-<ol>
+<ol aria-label="2 search suggestions">
     <li>
         <input type="hidden" value="foo">
         lorem ipsum
@@ -70,7 +70,7 @@ The server might also choose to respond with immediate results rather than query
 suggestions:
 
 ```html
-<ol>
+<ol aria-label="2 search suggestions">
     <li>
         <a href="http://example.org">example.org</a>
     </li>
@@ -82,7 +82,7 @@ suggestions:
 
 In fact, such HTML responses are not limited to any particular markup: The
 server is free to include multiple lists, contextual feedback messages or
-whatever seems appropriate (see (see [customization](#customization) below).
+whatever seems appropriate (see [customization](#customization) below).
 
 The `styles` directory contains some basic suggested CSS while `demo/demo.css`
 contains a rudimentary theme.
@@ -143,6 +143,20 @@ elements via selectors:
     </article>
 </simplete-form>
 ```
+
+
+### Accessibility
+
+Simplete will add the ARIA roles and attributes necessary in order for the
+autocomplete component to work with assistive technologies.
+
+While it is possible to [customize](#customization) the component with
+arbitrary HTML, we recommend using a semantic HTML list (`ol` or `ul`) with a
+corresponding
+[aria-label](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label),
+because we have performed screenreader tests for this markup
+(`aria-label` was necessary in order for the list of suggestions to be
+announced as a list in NVDA).
 
 
 Dependencies

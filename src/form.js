@@ -19,7 +19,7 @@ export default class SimpleteForm extends HTMLElement {
 	constructor(self) {
 		self = super(self);
 
-		bindMethods(self, "onInput", "onResponse");
+		bindMethods(self, "onInput", "onResponse", "onToggle");
 
 		return self;
 	}
@@ -33,11 +33,16 @@ export default class SimpleteForm extends HTMLElement {
 		let field = this.searchField;
 		field.setAttribute("autocomplete", "off");
 
+		field.setAttribute("role", "combobox");
+		field.setAttribute("aria-autocomplete", "list");
+		field.setAttribute("aria-expanded", "false");
+
 		let onQuery = debounce(this.queryDelay, this, this.onQuery);
 		this.addEventListener("input", onQuery);
 		this.addEventListener("change", onQuery);
 		this.addEventListener("simplete-suggestion-selection", this.onSelect);
 		field.addEventListener("keydown", this.onInput);
+		this.addEventListener("simplete-suggestion-toggle", this.onToggle);
 	}
 
 	onQuery(ev) {
@@ -106,13 +111,21 @@ export default class SimpleteForm extends HTMLElement {
 		}
 	}
 
+	onToggle(ev) {
+		let field = this.searchField;
+		field.setAttribute("aria-expanded", ev.detail.expanded ? "true" : "false");
+		field.removeAttribute("aria-activedescendant");
+	}
+
 	onSelect(ev) {
-		let { value, preview } = ev.detail;
+		let { id, value, preview } = ev.detail;
+		let field = this.searchField;
+		field.setAttribute("aria-activedescendant", id);
 		if(preview) {
 			this.navigating = true;
 		}
 		if(value) {
-			this.searchField.value = value;
+			field.value = value;
 			this.payload = this.serialize();
 		}
 
@@ -238,5 +251,9 @@ export default class SimpleteForm extends HTMLElement {
 
 	get cors() {
 		return this.hasAttribute("cors");
+	}
+
+	get suggestions() {
+		return this.querySelector(SUGGESTIONS_TAG);
 	}
 }

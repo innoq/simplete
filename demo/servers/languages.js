@@ -33,7 +33,7 @@ let server = http.createServer((req, res) => {
 		}).join("\n");
 		html = [
 			`<p>Results for '${query}':<p>\n`,
-			"<ul>",
+			`<ul aria-label="${candidates.length} search suggestion${candidates.length !== 1 ? "s" : ""}">`,
 			html,
 			"</ul>"
 		].join("\n");

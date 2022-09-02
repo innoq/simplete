@@ -2,6 +2,7 @@
 import { scrollIfNecessary, selectLast } from "./util";
 import { dispatchEvent } from "uitil/dom/events";
 import { find } from "uitil/dom";
+import { nid } from "uitil/uid";
 import bindMethods from "uitil/method_context";
 
 export const TAG = "simplete-suggestions";
@@ -25,7 +26,7 @@ export default class SimpleteSuggestions extends HTMLElement {
 	}
 
 	connectedCallback() {
-		this.setAttribute("aria-live", "polite");
+		this.setAttribute("role", "listbox");
 
 		this.addEventListener("click", this.onSelect);
 		this.nonLocalHandlers("+");
@@ -64,13 +65,19 @@ export default class SimpleteSuggestions extends HTMLElement {
 
 		find(this, FOCUSSABLE_ELEMENTS).
 			forEach(el => el.setAttribute("tabindex", "-1"));
+
+		find(this, this.itemSelector).forEach(el => {
+			el.id = el.id || "simplete-suggestion" + nid();
+			el.setAttribute("role", "option");
+			el.setAttribute("aria-selected", "false");
+		});
 	}
 
 	onCycle(ev) {
 		let next = ev.detail.direction === "next";
 		let selector = this.itemSelector;
 
-		let currentItem = this.querySelector(`${selector}[aria-selected]`);
+		let currentItem = this.querySelector(`${selector}[aria-selected=true]`);
 		if(!currentItem) { // select edge item, if any
 			currentItem = next ? // eslint-disable-next-line indent
 					this.querySelector(selector) : selectLast(this, selector);
@@ -126,7 +133,10 @@ export default class SimpleteSuggestions extends HTMLElement {
 			this.render("");
 		}
 
-		let payload = { preview };
+		let payload = {
+			id: node.id,
+			preview
+		};
 		let field = node.querySelector(this.fieldSelector);
 		if(field) {
 			let { name, value } = field;
@@ -145,6 +155,10 @@ export default class SimpleteSuggestions extends HTMLElement {
 
 		if(suggestions || suggestions === "") {
 			this.innerHTML = suggestions;
+
+			dispatchEvent(this.root, "simplete-suggestion-toggle", {
+				expanded: this.innerHTML.trim() !== ""
+			});
 		} // NB: intentionally not erasing suggestions otherwise to avoid flickering
 	}
 
