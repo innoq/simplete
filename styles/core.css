@@ -9,3 +9,27 @@ simplete-suggestions {
 simplete-suggestions:empty {
 	display: none;
 }
+
+/*
+Hide content visually:
+https://www.scottohara.me/blog/2017/04/14/inclusively-hidden.html#hiding-content-visually
+*/
+simplete-status {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip: rect(0 0 0 0);
+	clip-path: inset(50%);
+	white-space: nowrap;
+}
+
+/*
+When the user does not have the focus within the search field, the status field
+should also be hidden for assistive technologies because it otherwise does not
+have any meaning.
+*/
+label:not(:focus-within) + simplete-status,
+input:not(:focus) + simplete-status {
+	display: none;
+}

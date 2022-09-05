@@ -4,6 +4,10 @@ export function selectLast(node, selector) {
 	return length ? nodes[length - 1] : null;
 }
 
+export function insertAfter(newNode, referenceNode) {
+	referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+}
+
 // NB: only supports vertical scrolling
 export function scrollIfNecessary(node) {
 	let parentDimensions = node.parentElement.getBoundingClientRect();

@@ -25,15 +25,20 @@ let server = http.createServer((req, res) => {
 
 	let html;
 	if(candidates.length === 0) {
-		html = `<p>No results for '${query}'.<p>`;
+		html = `
+<p data-autocomplete-status="0 search suggestions available">No results for '${query}'.<p>
+		`.trim();
 	} else {
+		let status = candidates.length === 1 ? "1 search suggestion available" :
+			`${candidates.length} search suggestions available`;
+
 		html = candidates.map(lang => {
 			let uri = WIKIPEDIA + encodeURIComponent(lang);
 			return `<li><a href="${uri}">${lang}</a></li>`;
 		}).join("\n");
 		html = [
 			"<div>",
-			`<p>Results for '${query}':<p>\n`,
+			`<p data-autocomplete-status="${status}">Results for '${query}':<p>\n`,
 			`<ul aria-label="${candidates.length} search suggestion${candidates.length !== 1 ? "s" : ""}">`,
 			html,
 			"</ul>",

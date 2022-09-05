@@ -1,5 +1,7 @@
 /* eslint-env browser */
 import { TAG as SUGGESTIONS_TAG } from "./suggestions";
+import { TAG as STATUS_TAG } from "./status";
+import { insertAfter } from "./util";
 import { serializeForm } from "uitil/dom/forms";
 import { dispatchEvent } from "uitil/dom/events";
 import bindMethods from "uitil/method_context";
@@ -22,12 +24,20 @@ export default class SimpleteForm extends HTMLElement {
 	}
 
 	connectedCallback() {
+		let field = this.searchField;
+
+		if(!this.querySelector(STATUS_TAG)) {
+			let status = document.createElement(STATUS_TAG);
+			let labelOrField = field.closest("label") || field;
+
+			insertAfter(status, labelOrField);
+		}
+
 		if(!this.querySelector(SUGGESTIONS_TAG)) { // guard against repeat initialization
 			let results = document.createElement(SUGGESTIONS_TAG);
 			this.appendChild(results);
 		}
 
-		let field = this.searchField;
 		field.setAttribute("autocomplete", "off");
 
 		field.setAttribute("role", "combobox");

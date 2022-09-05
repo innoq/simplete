@@ -60,6 +60,15 @@ export default class SimpleteSuggestions extends HTMLElement {
 			this[prop] = selector || DEFAULTS[prop];
 		});
 
+		let status = this.querySelector("[data-autocomplete-status]");
+		if(status) {
+			dispatchEvent(
+					this.root,
+					"simplete-suggestion-status",
+					{ status: status.getAttribute("data-autocomplete-status") || "" }
+			);
+		}
+
 		find(this, FOCUSSABLE_ELEMENTS).
 			forEach(el => el.setAttribute("tabindex", "-1"));
 

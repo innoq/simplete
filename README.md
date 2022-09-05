@@ -24,7 +24,10 @@ We start out with a fairly straightforward form:
 ```html
 <form action="/search" method="get">
     <simplete-form>
-        <input type="search" name="query">
+        <label>
+            search
+            <input type="search" name="query">
+        </label>
     </simplete-form>
 
     <button>search</button>
@@ -36,7 +39,10 @@ Or, if we want to target different resources:
 ```html
 <form action="/search" method="get">
     <simplete-form action="/search/suggestions" method="get">
-        <input type="search" name="query">
+        <label>
+            search
+            <input type="search" name="query">
+        </label>
     </simplete-form>
 
     <button>search</button>
@@ -116,9 +122,10 @@ accessible via `event.detail.value`.
 </simplete-form>
 ```
 
-Similarly, server responses may optionally use attributes to identify content
-elements via selectors:
+Similarly, server responses may optionally use attributes specify how the
+response should be interpreted:
 
+* `data-autocomplete-status` will be announced to assistive technologies
 * `data-item-selector` (defaults to `"li"`) identifies results
 * `data-field-selector` (defaults to `"input[type=hidden]"`) identifies fields
   whose `value` will be used for populating the search field
@@ -126,7 +133,8 @@ elements via selectors:
   immediate results
 
 ```html
-<section data-item-selector="article h3"
+<section data-autocomplete-status="2 search suggestions available"
+        data-item-selector="article h3"
         data-field-selector="button[type=button]"
         data-result-selector="button[type=submit]">
     <article>
