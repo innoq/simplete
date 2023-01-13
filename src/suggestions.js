@@ -113,6 +113,7 @@ export default class SimpleteSuggestions extends HTMLElement {
 		if(target) {
 			target.click(); // XXX: hacky?
 		}
+		this.render("");
 	}
 
 	onAbort(ev) {

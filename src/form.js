@@ -100,7 +100,6 @@ export default class SimpleteForm extends HTMLElement {
 			// suppress form submission (only) while navigating results -
 			// otherwise let the browser's default behavior kick in
 			if(this.navigating) {
-				delete this.navigating;
 				dispatchEvent(this, "simplete-confirm"); // TODO: rename?
 				ev.preventDefault();
 			}
@@ -110,11 +109,15 @@ export default class SimpleteForm extends HTMLElement {
 		case 27: // Escape
 			if(this.query) { // restore original (pre-preview) input
 				this.searchField.value = this.query;
-				delete this.navigating;
 				dispatchEvent(this, "simplete-abort"); // TODO: rename?
 				ev.preventDefault();
 			}
 			break;
+		default:
+			if(this.query && this.navigating) { // restore original (pre-preview) input
+				this.searchField.value = this.query;
+				dispatchEvent(this, "simplete-abort"); // TODO: rename?
+			}
 		}
 	}
 
@@ -128,9 +131,6 @@ export default class SimpleteForm extends HTMLElement {
 		let { id, value, preview } = ev.detail;
 		let field = this.searchField;
 		field.setAttribute("aria-activedescendant", id);
-		if(preview) {
-			this.navigating = true;
-		}
 		if(value) {
 			field.value = value;
 			this.payload = this.serialize();
@@ -213,6 +213,10 @@ export default class SimpleteForm extends HTMLElement {
 
 	get blank() {
 		return !this.searchField.value.trim();
+	}
+
+	get navigating() {
+		return this.searchField.hasAttribute("aria-activedescendant");
 	}
 
 	get searchField() { // TODO: memoize, resetting cached value on blur?
