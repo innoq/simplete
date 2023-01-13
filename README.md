@@ -176,7 +176,7 @@ However, it does rely on modern browser features which might have to be
 polyfilled:
 
 * custom elements — suggested polyfill:
-  [document-register-element](https://github.com/WebReflection/document-register-element)
+  [@ungap/custom-elements](https://github.com/ungap/custom-elements)
 * `fetch` — suggested polyfill: [whatwg-fetch](https://github.com/github/fetch)
   or [unfetch](https://github.com/developit/unfetch)
 * `CustomEvent`

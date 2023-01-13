@@ -32,10 +32,12 @@ let server = http.createServer((req, res) => {
 			return `<li><a href="${uri}">${lang}</a></li>`;
 		}).join("\n");
 		html = [
+			"<div>",
 			`<p>Results for '${query}':<p>\n`,
 			`<ul aria-label="${candidates.length} search suggestion${candidates.length !== 1 ? "s" : ""}">`,
 			html,
-			"</ul>"
+			"</ul>",
+			"</div>"
 		].join("\n");
 	}
 

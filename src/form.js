@@ -15,13 +15,10 @@ const DEFAULTS = {
 const RESET = {}; // poor man's `Symbol`
 
 export default class SimpleteForm extends HTMLElement {
-	// NB: `self` only required due to document-register-element polyfill
-	constructor(self) {
-		self = super(self);
+	constructor() {
+		super();
 
-		bindMethods(self, "onInput", "onResponse", "onToggle");
-
-		return self;
+		bindMethods(this, "onInput", "onResponse", "onToggle");
 	}
 
 	connectedCallback() {

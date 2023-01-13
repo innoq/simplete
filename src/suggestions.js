@@ -16,13 +16,10 @@ const DEFAULTS = {
 const FOCUSSABLE_ELEMENTS = "button, [href], input, select, textarea, [tabindex]:not([tabindex='-1']";
 
 export default class SimpleteSuggestions extends HTMLElement {
-	// NB: `self` only required due to document-register-element polyfill
-	constructor(self) {
-		self = super(self);
+	constructor() {
+		super();
 
-		bindMethods(self, "onQuery", "onResults", "onCycle", "onConfirm", "onAbort");
-
-		return self;
+		bindMethods(this, "onQuery", "onResults", "onCycle", "onConfirm", "onAbort");
 	}
 
 	connectedCallback() {
