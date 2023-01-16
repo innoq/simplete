@@ -16,7 +16,7 @@
 	"module": "index.js",
 	"scripts": {
 		"start": "faucet --watch",
-		"test": "eslint --cache *.js src demo/servers && echo ✓",
+		"test": "eslint --cache *.js src demo && echo ✓",
 		"compile": "faucet --compact"
 	},
 	"dependencies": {
