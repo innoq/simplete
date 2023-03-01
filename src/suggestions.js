@@ -133,15 +133,15 @@ export default class SimpleteSuggestions extends HTMLElement {
 		}
 	}
 
-	selectItem(node, preview) {
-		if(!preview) {
+	selectItem(node, navigating) {
+		if(!navigating) {
 			node = node.cloneNode(true); // prevents IE 11 from discarding child elements
 			this.render("");
 		}
 
 		let payload = {
 			id: node.id,
-			preview
+			navigating
 		};
 		let field = node.querySelector(this.fieldSelector);
 		if(field) {

@@ -115,6 +115,12 @@ export default class SimpleteForm extends HTMLElement {
 				ev.preventDefault();
 			}
 			break;
+		default:
+			if(this.query && this.navigating) { // restore original (pre-preview) input
+				this.searchField.value = this.query;
+				delete this.navigating;
+				dispatchEvent(this, "simplete-abort"); // TODO: rename?
+			}
 		}
 	}
 
@@ -122,13 +128,15 @@ export default class SimpleteForm extends HTMLElement {
 		let field = this.searchField;
 		field.setAttribute("aria-expanded", ev.detail.expanded ? "true" : "false");
 		field.removeAttribute("aria-activedescendant");
+		delete this.navigating;
 	}
 
 	onSelect(ev) {
-		let { id, value, preview } = ev.detail;
+		let { id, value, navigating } = ev.detail;
 		let field = this.searchField;
-		field.setAttribute("aria-activedescendant", id);
-		if(preview) {
+
+		if (navigating) {
+			field.setAttribute("aria-activedescendant", id);
 			this.navigating = true;
 		}
 		if(value) {
@@ -137,7 +145,7 @@ export default class SimpleteForm extends HTMLElement {
 		}
 
 		// notify external observers
-		if(value && !preview) {
+		if(value && !navigating) {
 			dispatchEvent(this, "simplete-selection", { value }, { bubbles: true });
 		}
 	}
