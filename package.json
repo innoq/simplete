@@ -24,7 +24,7 @@
 	},
 	"devDependencies": {
 		"eslint-config-fnd": "^1.13.0",
-		"faucet-pipeline-esnext": "^2.1.8",
+		"faucet-pipeline-esnext": "^3.0.0",
 		"release-util-fnd": "^3.0.0"
 	}
 }
