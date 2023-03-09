@@ -85,13 +85,11 @@ export default class SimpleteForm extends HTMLElement {
 		switch(ev.code || ev.key || ev.keyCode) {
 		case "Up":
 		case "ArrowUp":
-		case "Numpad8":
 		case 38: // arrow up
 			dispatchEvent(this, "simplete-nav", { direction: "prev" });
 			break;
 		case "Down":
 		case "ArrowDown":
-		case "Numpad2":
 		case 40: // arrow down
 			dispatchEvent(this, "simplete-nav", { direction: "next" });
 			break;
