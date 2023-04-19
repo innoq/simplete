@@ -88,7 +88,7 @@ export default class SimpleteSuggestions extends HTMLElement {
 			currentItem = next ? // eslint-disable-next-line indent
 					this.querySelector(selector) : selectLast(this, selector);
 		} else { // select adjacent item or wrap around
-			currentItem.removeAttribute("aria-selected");
+			currentItem.setAttribute("aria-selected", "false");
 
 			let items = find(this, selector);
 			let index = items.indexOf(currentItem);
@@ -107,7 +107,10 @@ export default class SimpleteSuggestions extends HTMLElement {
 	}
 
 	onConfirm(ev) {
-		let item = this.querySelector(`${this.itemSelector}[aria-selected]`);
+		let item = this.querySelector(`${this.itemSelector}[aria-selected=true]`);
+		if(!item) {
+			return;
+		}
 		let target = item.querySelector(this.fieldSelector) ||
 				item.querySelector(this.resultSelector);
 		if(target) {
